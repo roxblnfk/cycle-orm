@@ -262,4 +262,18 @@ abstract class DeepEmbeddedTest extends BaseTest
 
         $this->assertCount(8, $selector->buildQuery()->getColumns());
     }
+
+    public function testUnmappedFieldNotStored(): void
+    {
+        $selector = new Select($this->orm, User::class);
+        $selector->where('id', '1');
+
+        /** @var User $user */
+        $user = $selector->fetchOne();
+
+        $user->credentials->username = 'new-user-name';
+        $user->credentials->unmapped_public_property = 'unmapped-value';
+
+        $this->save($user);
+    }
 }
